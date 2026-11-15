@@ -93,10 +93,18 @@ def test_contra_entrenamiento():
     calc = calcular_variables(e[CIFRAS_ENTRADA])
     calc[["empresa", "anio"]] = e[["empresa", "anio"]]
     f = pd.read_csv(filt)
-    m = f.merge(calc, on=["empresa", "anio"], suffixes=("_ref", "_calc"), validate="one_to_one")
-    assert len(m) == len(f) == 78682
+    # Alineación por (empresa, anio), no por posición; las claves deben coincidir exactamente.
+    m = f.merge(calc, on=["empresa", "anio"], how="outer", suffixes=("_ref", "_calc"),
+                validate="one_to_one", indicator=True)
+    assert (m["_merge"] == "both").all(), (
+        f"claves (empresa, anio) no coinciden: {m['_merge'].value_counts().to_dict()}")
+    assert len(m) == len(f) == len(e) == 78682
+    # Informe: filas con activo_total <= 0 en dataset_elaborado (y su coincidencia con filtrado)
+    no_pos = e.loc[e["activo_total"] <= 0, ["empresa", "anio"]]
+    print(f"\nFilas con activo_total <= 0 en dataset_elaborado: {len(no_pos)}")
+    assert len(no_pos) == 0, "hay filas con activo_total <= 0: revisar y reportar, no ajustar"
     maximos = {}
-    for col in VARIABLES_MODELO:
+    for col in VARIABLES_MODELO:  # incluye tamano_empresa, comparada contra dataset_filtrado
         a, b = m[f"{col}_ref"].to_numpy(float), m[f"{col}_calc"].to_numpy(float)
         assert (np.isnan(a) == np.isnan(b)).all(), f"NaN distintos en {col}"
         ok = ~np.isnan(a)

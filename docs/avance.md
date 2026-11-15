@@ -46,3 +46,9 @@ margen_neto 1.8e-12 | valor_mercado_pasivos 3.6e-12 | rotacion_activos 5.7e-14
 gastos_operativos_ingresos 1.8e-12 | rotacion_cuentas_cobrar 1.8e-12
 crecimiento_ingresos 4.5e-13 | tamano_empresa 3.6e-15
 ```
+
+### Etapa 1 — ajustes tras la revisión
+- Criterio aprobado: los ratios usan división simple (solo denominador 0 → NaN); el bloqueo de `activo_total` ≤ 0 vive en `validaciones.py`.
+- `dataset_elaborado.csv`: **0 filas** con `activo_total` ≤ 0 (0 iguales a cero, 0 negativas, 0 NaN), por lo que no hay casos que contrastar con `dataset_filtrado.csv`; la prueba falla si aparece alguno.
+- La comparación se alinea por (`empresa`, `anio`) con `merge` externo y `validate="one_to_one"`; la prueba falla si alguna clave no está en ambos conjuntos. `tamano_empresa` se compara contra `dataset_filtrado.csv` con el mismo mecanismo.
+- Salida: `9 passed`, sin omitidas; «Filas con activo_total <= 0 en dataset_elaborado: 0».
