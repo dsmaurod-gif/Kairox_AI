@@ -1,0 +1,4 @@
+caso,tipo,empresa,anio,activo_corriente,pasivo_corriente,inventario,activo_total,pasivo_total,deuda_largo_plazo,utilidades_retenidas,cuentas_por_cobrar,valor_mercado,ingresos_totales,ingresos_anio_anterior,utilidad_bruta,ebitda,ebit,utilidad_neta,gastos_operativos,riesgo_real,puntaje_referencia
+1,acierto,C_333,2009,3658.845,1544.136,25.838,18047.101,24891.839,20303.126,-9409.393,1437.907,256.6955,5551.909,6688.683,3058.25,1412.498,647.024,-4034.086,4139.411,1,0.640806433181872
+2,falsa alarma,C_2595,2015,2.549,2.154,0.435,3.776,2.249,0.095,-19.934,0.911,28.4096,7.089,3.7,2.656,-7.159,-7.477,-8.282,14.248,0,0.6030005247559367
+3,caso no detectado,C_5658,2008,5.12,1.808,0.0,5.473,1.808,0.0,-31.182,3.881,1.0787,19.651,20.83,4.476,-1.633,-1.812,-2.924,21.284,1,0.31580793276042757

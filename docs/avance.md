@@ -104,3 +104,22 @@ RNF03 (otras 2 ejecuciones): mediana 0.0377 s, máx 0.0471 s | mediana 0.0371 s,
 Integridad tras el cambio: (a) y (b) diferencia máxima 1.110e-16, 0 observaciones difieren;
 407 detectadas, 2516 falsas alarmas; RESULTADO: COINCIDE
 ```
+
+## Etapa 4 — Ejemplos y plantilla (2026-11-15)
+
+**Hecho**
+- `scripts/seleccionar_ejemplos.py`, `data/ejemplos_prueba.csv` (3 casos reales del conjunto de prueba), `data/plantilla_empresa.csv` (16 columnas y una fila con cifras ficticias), `src/kairox/ejemplos.py` (carga, rótulos y «Lo que ocurrió») y `tests/test_ejemplos.py`.
+- **Regla de selección (6.6, confirmada por el responsable):** la mediana del puntaje se calcula sobre **todas** las observaciones de la categoría (par: promedio de los dos centrales); el representante es, entre las observaciones con año anterior disponible y `activo_total` dentro de [p1, p99], la de puntaje más cercano a esa mediana; desempate por (`empresa`, `anio`). `anio` es entero y el CSV solo lleva las columnas pedidas.
+- El conjunto de prueba se usó solo para leer y elegir los 3 casos.
+
+**Hallazgo menor:** `pd.read_csv` con el lector rápido altera el último bit de un decimal (0.31580793276042757 → 0.3158079327604275). `cargar_ejemplos()` usa `float_precision="round_trip"` y la prueba contra `proba_prueba.npy` compara con `==`.
+
+**Salida cruda**
+```
+acierto: 407 observaciones, 386 elegibles, mediana 0.640806 -> C_333 2009 (puntaje 0.640806)
+falsa alarma: 2516 observaciones, 2328 elegibles, mediana 0.602984 -> C_2595 2015 (puntaje 0.603001)
+caso no detectado: 642 observaciones, 536 elegibles, mediana 0.315374 -> C_5658 2008 (puntaje 0.315808)
+pytest -q -rs (repositorio, con datos_locales/): 57 passed, sin omitidas
+pytest tests/test_ejemplos.py (copia SIN datos_locales/): 6 passed, 1 skipped
+  SKIPPED: requiere datos_locales/dataset_prueba.csv   (la prueba contra los datos originales)
+```
