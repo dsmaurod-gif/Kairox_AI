@@ -147,3 +147,24 @@ pytest -q -rs: 64 passed in 22.60s   (sin omitidas)
 tests/test_app.py: 7 passed
 Tiempo de cálculo mostrado en pantalla: 0.043 s (ejemplo), 0.137 s (primera carga del archivo)
 ```
+
+## Etapa 6 — Documentación, limpieza de cuadernos e informe de pruebas (2026-11-15)
+
+**Hecho**
+- `README.md`, `LICENSE` (MIT, a nombre de Glidis Lilani Aguirre Saldaña y Diego Sebastian Mauricio Rodriguez), `docs/arquitectura.md`, `docs/guia_estilo.md`, `docs/declaracion_uso_ia.md` y `data/README_datos.md`.
+- `scripts/limpiar_cuaderno.py` (elimina `executionInfo.user` y verifica que no queden `displayName`, `userId` ni correos; no escribe nada si queda alguno; no sobrescribe sin `--in-place`) y `tests/test_limpiar_cuaderno.py` (7 pruebas con cuadernos sintéticos).
+- `notebooks/Proyecto_IA_202620.ipynb`: copiado desde la carpeta de Descargas con el script de limpieza. El cuaderno **ya estaba limpio** (0 celdas con `executionInfo`, 0 `displayName`/`userId`, 0 correos; `metadata.colab.provenance` vacío; la única «@» es un `@media` de CSS), por lo que el contenido es idéntico al original. Verificación independiente con `grep` sobre la copia: 0 coincidencias. Búsqueda de credenciales (`kaggle.json`, `api_key`, `token`, `password`, `secret`, claves de API): 0; las rutas `/content/drive/MyDrive/PROYECTO_IA/...` son nombres de carpetas, no credenciales. El cuaderno de anemia no se tocó.
+- `reports/pruebas_7_1_3.md`: salidas crudas de `pytest -v -rs -s`, de la prueba de integridad y de RNF03, con tabla de cumplimiento calculada a partir de esas salidas. Única edición del texto crudo: las rutas locales se sustituyeron por `<RAIZ>`, `<TEMP>` y `<usuario>`.
+- Eliminados `app/.gitkeep` y `.streamlit/.gitkeep`.
+
+**Pendientes marcados «[completar]»:** tareas en las que se usó Gemini (`docs/declaracion_uso_ia.md`), enlace de Kaggle y licencia del dataset (`data/README_datos.md`).
+
+**Hallazgo en el generador del informe:** un primer análisis por texto subcontaba las pruebas por archivo (60 de 71) porque los `print` de las pruebas se intercalan con la salida de `-v`; se corrigió contando con el XML de pytest (`--junitxml`), que suma 71.
+
+**Salida cruda** (resumen; el detalle está en el informe)
+```
+pytest -v -rs -s: 71 passed, 0 omitidas
+integridad: (a) 1.110e-16, (b) 1.110e-16, 0 difieren; 407 detectadas, 2516 falsas alarmas; COINCIDE
+RNF03: mediana 0.0346 s; máximo 0.0790 s (límite 5 s)
+limpiar_cuaderno.py sobre el cuaderno real: 0 hallazgos antes y después; RESULTADO: LIMPIO
+```
