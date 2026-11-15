@@ -83,8 +83,8 @@ Se utilizaron **Claude (Claude Code)** y **Gemini**. El detalle está en [docs/d
 
 ## Equipo
 
-- Glidis Lilani Aguirre Saldaña
-- Diego Sebastian Mauricio Rodriguez
+- Glidis Aguirre
+- Diego Mauricio
 
 ## Licencia
 
