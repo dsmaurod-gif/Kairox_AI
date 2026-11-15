@@ -123,3 +123,27 @@ pytest -q -rs (repositorio, con datos_locales/): 57 passed, sin omitidas
 pytest tests/test_ejemplos.py (copia SIN datos_locales/): 6 passed, 1 skipped
   SKIPPED: requiere datos_locales/dataset_prueba.csv   (la prueba contra los datos originales)
 ```
+
+## Etapa 5 — App Streamlit (2026-11-15)
+
+**Hecho**
+- `.streamlit/config.toml` (tema de la sección 10; sin estadísticas de uso), `app/app.py` y `tests/test_app.py` (`streamlit.testing.v1.AppTest`, 7 pruebas).
+- App en una sola página, 2 pasos: **1 Datos** (tres métodos en pestañas: empresa de ejemplo, subir archivo con plantilla descargable, ingresar manualmente) y **2 Resultado** (anillo con el puntaje `0.xx`, etiqueta, barra con «Umbral 0.50», explicación individual, variables que más usa el modelo, «Cómo leer este resultado», tiempo de cálculo). Glosario de 17 indicadores y sección «Modelo» con las métricas permitidas.
+- Decisiones aprobadas: tipografías del sistema (`sans-serif`/`monospace`, sin peticiones externas); el resultado aparece debajo del formulario sin ocultarlo y **se recalcula** al modificar cifras; los campos manuales parten de las cifras del ejemplo o del archivo; el rótulo del caso y «Lo que ocurrió» se ocultan en cuanto se edita un valor; `guia_estilo.md` queda para la etapa 6.
+- Un clic en un ejemplo carga las 16 cifras y analiza de inmediato; «Analizar empresa» queda desactivado mientras haya bloqueos.
+- Nunca se muestra el puntaje como probabilidad ni porcentaje (escala 0–1, dos decimales).
+
+**Verificación en navegador** (servidor `streamlit run app/app.py` + Edge sin interfaz controlado por CDP; guion auxiliar fuera del repositorio)
+- Ancho 1000 px y 390 px (celular): sin desborde horizontal (`scrollWidth` = `clientWidth`); en celular todo pasa a una columna.
+- Probados los 3 métodos: ejemplos (acierto, falsa alarma, caso no detectado), archivo (plantilla → puntaje 0.18, «Inversión viable»; origen «Archivo (plantilla_empresa.csv)») y campos manuales tras cargar un ejemplo.
+- Corregido tras la inspección visual: el botón «Analizar empresa» desactivado tenía contraste ilegible.
+- **Observación pendiente (cosmética):** en pantalla de 390 px la tercera pestaña («Ingresar manualmente») queda parcialmente recortada y se desplaza con el indicador «›».
+- Limitación: la verificación visual fue con Edge en modo sin interfaz; no se probó en un celular real ni con otros navegadores.
+
+**Salida cruda**
+```
+servidor: Uvicorn started on :::8599; GET / -> 200; /_stcore/health -> ok
+pytest -q -rs: 64 passed in 22.60s   (sin omitidas)
+tests/test_app.py: 7 passed
+Tiempo de cálculo mostrado en pantalla: 0.043 s (ejemplo), 0.137 s (primera carga del archivo)
+```
