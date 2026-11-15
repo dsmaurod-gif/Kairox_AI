@@ -52,3 +52,36 @@ crecimiento_ingresos 4.5e-13 | tamano_empresa 3.6e-15
 - `dataset_elaborado.csv`: **0 filas** con `activo_total` ≤ 0 (0 iguales a cero, 0 negativas, 0 NaN), por lo que no hay casos que contrastar con `dataset_filtrado.csv`; la prueba falla si aparece alguno.
 - La comparación se alinea por (`empresa`, `anio`) con `merge` externo y `validate="one_to_one"`; la prueba falla si alguna clave no está en ambos conjuntos. `tamano_empresa` se compara contra `dataset_filtrado.csv` con el mismo mecanismo.
 - Salida: `9 passed`, sin omitidas; «Filas con activo_total <= 0 en dataset_elaborado: 0».
+
+## Etapa 2 — Modelo y prueba de integridad (2026-11-15)
+
+**Hecho**
+- `models/modelo_final.joblib` copiado (24,083,977 bytes = 24.08 MB; `models/` no está en `.gitignore`).
+- `src/kairox/modelo.py`: `cargar_modelo()` (expone `Winsorizador` en `__main__` antes de `joblib.load`), `puntuar()` (exige las 17 columnas en el orden de los metadatos y falla ante avisos de nombres de columnas), `clasificar()` (criterio `>=`, constante `CRITERIO`) e `importancias()`.
+- `scripts/verificar_integridad.py` y `tests/test_integridad.py` (rutas desde la raíz; `skip` explícito si faltan los datos). Guarda `reports/importancias_modelo.csv` (17 variables).
+
+**Verificaciones (a) y (b), ambas obligatorias**
+- (a) variables ya calculadas en `dataset_prueba.csv`; (b) variables recalculadas con `indicadores.py` desde las cifras, cruzando por (`empresa`, `anio`) con `dataset_elaborado.csv` (15,742 filas) y `ingresos_anio_anterior` = `shift(1)` por empresa.
+- El primer año de cada empresa deja `ingresos_anio_anterior` en NaN: 1,794 primeros años = 1,794 NaN.
+
+**Observación:** los criterios `>=` y `>` dan los mismos conteos (ningún puntaje de la prueba es exactamente 0.50), por lo que la prueba no distingue entre ambos. Se mantiene `>=` según la sección 6.2.
+
+**Salida cruda** (`python scripts/verificar_integridad.py`, exit=0)
+```
+Observaciones: 15742 | empresas: 1794
+(a) diferencia máxima 3.331e-16; observaciones que difieren (> 1e-09): 0
+(b) diferencia máxima 4.441e-16; observaciones que difieren (> 1e-09): 0
+(b) cruce por (empresa, anio): 15742 filas; primeros años: 1794; ingresos_anio_anterior NaN: 1794
+Observaciones de riesgo: 1049
+  criterio '>=': detectadas=407 falsas_alarmas=2516 F1=0.2049 recall=0.3880 precisión=0.1392
+  criterio '>':  detectadas=407 falsas_alarmas=2516 F1=0.2049 recall=0.3880 precisión=0.1392
+clasificar() sobre (b): detectadas=407, falsas_alarmas=2516
+PR-AUC: 0.1351 (referencia sin capacidad predictiva: 0.0666)
+Importancias (%): deuda_lp_activos 10.5 | tamano_empresa 8.8 | valor_mercado_pasivos 7.3 |
+margen_bruto 7.1 | margen_neto 6.5 | utilidades_retenidas_activos 5.8 | endeudamiento 5.6 |
+rotacion_activos 5.5 | rotacion_cuentas_cobrar 5.3 | gastos_operativos_ingresos 5.2 |
+margen_ebitda 5.1 | capital_trabajo_activos 5.0 | prueba_acida 4.9 | crecimiento_ingresos 4.8 |
+roa 4.6 | ebit_activos 4.2 | liquidez_corriente 3.7
+RESULTADO: COINCIDE
+pytest -q -rs: 13 passed in 6.83s (sin omitidas)
+```
