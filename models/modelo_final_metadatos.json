@@ -1,0 +1,33 @@
+{
+  "algoritmo": "Random Forest",
+  "hiperparametros": {
+    "n_estimators": 300,
+    "max_samples": 0.5,
+    "max_features": "sqrt",
+    "min_samples_leaf": 20,
+    "smote_sampling_strategy": 1.0
+  },
+  "variables": [
+    "liquidez_corriente",
+    "prueba_acida",
+    "capital_trabajo_activos",
+    "endeudamiento",
+    "deuda_lp_activos",
+    "utilidades_retenidas_activos",
+    "ebit_activos",
+    "roa",
+    "margen_bruto",
+    "margen_ebitda",
+    "margen_neto",
+    "valor_mercado_pasivos",
+    "rotacion_activos",
+    "gastos_operativos_ingresos",
+    "rotacion_cuentas_cobrar",
+    "crecimiento_ingresos",
+    "tamano_empresa"
+  ],
+  "semilla": 42,
+  "f1_riesgo_cv_busqueda": 0.221,
+  "recall_riesgo_cv_busqueda": 0.4153,
+  "umbral_decision": 0.5
+}

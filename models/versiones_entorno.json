@@ -1,0 +1,11 @@
+{
+  "versiones": {
+    "python": "3.13.18",
+    "scikit-learn": "1.6.1",
+    "imbalanced-learn": "0.14.2",
+    "numpy": "2.4.6",
+    "pandas": "2.2.3",
+    "joblib": "1.6.0"
+  },
+  "advertencias_carga": []
+}
