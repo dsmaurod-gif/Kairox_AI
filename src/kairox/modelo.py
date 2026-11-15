@@ -28,6 +28,11 @@ def cargar_modelo():
     # __main__; para deserializarlo hay que exponerla allí antes de joblib.load.
     sys.modules["__main__"].Winsorizador = Winsorizador
     pipeline = joblib.load(CARPETA_MODELOS / "modelo_final.joblib")
+    # El bosque se guardó con n_jobs=-1: la suma de los 300 árboles en varios hilos
+    # cambia de orden entre llamadas y el puntaje varía en el último bit (~3e-17).
+    # Con n_jobs=1 el mismo dato da exactamente el mismo puntaje (RNF04). Es un ajuste
+    # en memoria de ejecución, no un hiperparámetro del modelo: el archivo no cambia.
+    pipeline.named_steps["modelo"].n_jobs = 1
     with open(CARPETA_MODELOS / "modelo_final_metadatos.json", encoding="utf-8") as f:
         metadatos = json.load(f)
     with open(CARPETA_MODELOS / "parametros_modelo.json", encoding="utf-8") as f:

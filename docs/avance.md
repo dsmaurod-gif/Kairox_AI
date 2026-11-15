@@ -85,3 +85,22 @@ roa 4.6 | ebit_activos 4.2 | liquidez_corriente 3.7
 RESULTADO: COINCIDE
 pytest -q -rs: 13 passed in 6.83s (sin omitidas)
 ```
+
+## Etapa 3 — Validaciones, explicación y rendimiento (2026-11-15)
+
+**Hecho**
+- `src/kairox/validaciones.py`: `validar_cifras()` (bloqueos, avisos y escala con los límites de `parametros_modelo.json`) y `leer_csv()` (devuelve `(cifras, mensajes)`; separador `,` o `;`, coma decimal con `;`, solo la primera fila, nunca lanza excepciones). Un 0 cuenta como cifra presente; las columnas ausentes del CSV se tratan como cifras faltantes (avisos y bloqueos normales). El rango [p1, p99] de `activo_total` solo avisa: el recorte lo hace el modelo.
+- `src/kairox/explicacion.py`: `explicar()` puntúa la fila original y las 17 variantes (variable → mediana de entrenamiento) en **un solo** `predict_proba`; muestra las 5 de mayor |efecto| con signo, valor y «sin dato» (efecto 0), más el texto obligatorio de aproximación.
+- `tests/test_validaciones.py` (RNF04 y explicación) y `tests/test_rendimiento.py` (RNF03).
+
+**Hallazgo (RNF04):** el mismo dato daba 3 puntajes distintos en 100 llamadas (diferencias de 1 ulp, ~3e-17). Causa: el bosque se guardó con `n_jobs=-1` y la suma de árboles en hilos cambia de orden. Decisión aprobada: `cargar_modelo()` fija `n_jobs=1` **en memoria** (el `.joblib` no cambia; no es un hiperparámetro que afecte lo que el modelo predice). Con ello las 100 llamadas dan exactamente el mismo valor. Se descartaron redondear el puntaje y relajar la prueba con tolerancia.
+
+**Salida cruda** (3 ejecuciones consecutivas de `pytest -q -rs -s`)
+```
+50 passed in 13.90s / 13.65s / 13.26s   — sin omitidas
+RNF03 (100 llamadas de puntuar + explicacion): mediana 0.0387 s; máximo 0.0622 s; límite 5.0 s
+RNF03 (otras 2 ejecuciones): mediana 0.0377 s, máx 0.0471 s | mediana 0.0371 s, máx 0.0479 s
+(antes del cambio, con n_jobs=-1: mediana 0.1211 s; máximo 0.3497 s)
+Integridad tras el cambio: (a) y (b) diferencia máxima 1.110e-16, 0 observaciones difieren;
+407 detectadas, 2516 falsas alarmas; RESULTADO: COINCIDE
+```
