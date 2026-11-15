@@ -168,3 +168,8 @@ integridad: (a) 1.110e-16, (b) 1.110e-16, 0 difieren; 407 detectadas, 2516 falsa
 RNF03: mediana 0.0346 s; máximo 0.0790 s (límite 5 s)
 limpiar_cuaderno.py sobre el cuaderno real: 0 hallazgos antes y después; RESULTADO: LIMPIO
 ```
+
+### Etapa 6 — ajustes tras la revisión
+- `docs/declaracion_uso_ia.md`: completado el uso de Gemini (configuración de Git/VS Code; evaluación técnica de decisiones de arquitectura y del determinismo del modelo, `n_jobs=1`; validación de criterios de diseño de la interfaz; revisión de decisiones por etapa). El documento se revisará antes de la entrega final.
+- `data/README_datos.md`: el enlace de Kaggle y la licencia del dataset quedan como «[completar]» para agregarlos manualmente desde la fuente original.
+- Eliminados todos los `.gitkeep` (`data/`, `reports/`, `scripts/`, `notebooks/`, además de los de `app/` y `.streamlit/`); ya no queda ninguno en el árbol.

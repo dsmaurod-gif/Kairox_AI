@@ -3,7 +3,11 @@
 ## Herramientas utilizadas
 
 - **Claude (Claude Code)**, de Anthropic. En este repositorio se usó el modelo Claude Sonnet 5.5, ejecutado desde la extensión de VS Code.
-- **Gemini**, de Google. Tareas en las que se utilizó: [completar].
+- **Gemini**, de Google. Se utilizó para:
+  - asistencia en la configuración del entorno Git y VS Code;
+  - evaluación técnica de decisiones de arquitectura y del determinismo del modelo (fijación de `n_jobs=1`);
+  - validación de criterios de diseño de la interfaz;
+  - revisión de decisiones por etapa.
 
 ## Uso de Claude Code en este repositorio
 
